@@ -1,7 +1,6 @@
     // Copyright (c) 2016-2018 Clearmatics Technologies Ltd
 // SPDX-License-Identifier: LGPL-3.0+
-pragma solidity ^0.4.23;
-
+pragma solidity ^0.5.2;
 //import "../DxInteracts.sol";
 
 import "./libraries/RLP.sol";
@@ -80,7 +79,7 @@ contract DxiTriggerPostSellOrder {
     using RLP for RLP.Iterator;
     using RLP for bytes;
 
-    function CheckProofs(bytes32 _blockHash, bytes _proof) public returns (bytes memory){
+    function CheckProofs(bytes32 _blockHash, bytes memory _proof) public returns (bytes memory){
         RLP.RLPItem[] memory proof = _proof.toRLPItem().toList();
 
         require(proof.length == 5, "Malformed proof");
@@ -111,9 +110,9 @@ contract DxiTriggerPostSellOrder {
     */
     function CheckTxProof(
         bytes32 _blockHash,
-        bytes _value,
-        bytes _parentNodes,
-        bytes _path
+        bytes memory _value,
+        bytes memory _parentNodes,
+        bytes memory _path
     )
         internal
         returns (bool)
@@ -145,9 +144,9 @@ contract DxiTriggerPostSellOrder {
     */
     function CheckReceiptProof(
         bytes32 _blockHash,
-        bytes _value,
-        bytes _parentNodes,
-        bytes _path
+        bytes memory _value,
+        bytes memory _parentNodes,
+        bytes memory _path
     )
         internal
         returns (bool)
@@ -175,8 +174,8 @@ contract DxiTriggerPostSellOrder {
     */
     function CheckRootsProof(
         bytes32 _blockHash,
-        bytes _txNodes,
-        bytes _receiptNodes
+        bytes memory _txNodes,
+        bytes memory _receiptNodes
     )
         internal
         returns (bool)
@@ -187,7 +186,7 @@ contract DxiTriggerPostSellOrder {
         return true;
     }
 
-    function verifyProof(bytes _value, bytes _parentNodes, bytes _path, bytes32 _hash) internal {
+    function verifyProof(bytes memory _value, bytes memory _parentNodes, bytes memory _path, bytes32 _hash) internal {
         assert( PatriciaTrie.verifyProof(_value, _parentNodes, _path, _hash) );
     }
 
@@ -204,7 +203,7 @@ contract DxiTriggerPostSellOrder {
 	* @param _rlpNodes  RLP encoded trie
 	* @returns          root hash
 	*/
-    function getRootNodeHash(bytes _rlpNodes) private view returns (bytes32) {
+    function getRootNodeHash(bytes memory _rlpNodes) private view returns (bytes32) {
         RLP.RLPItem[] memory nodeList = _rlpNodes.toRLPItem().toList();
 
         bytes memory b_nodeRoot = RLP.toBytes(nodeList[0]);
