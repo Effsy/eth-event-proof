@@ -20,14 +20,14 @@ import "./EventVerifier.sol";
 contract EventEmitterVerifier is EventVerifier {
     bytes32 eventSignature = keccak256("EventOfInterest()");
 
-    function verify(bytes20 _contractEmittedAddress, bytes memory _rlpReceipt, bytes20 _expectedAddress) public view returns (bool) {
-        // Retrieve specific log for given event signature
-        // RLP.RLPItem[] memory log = retrieveLog(eventSignature, _contractEmittedAddress, _rlpReceipt);
+    function verify(bytes20 _contractEmittedAddress, bytes memory _rlpReceipt) public view returns (bool) {
+        //Retrieve specific log for given event signature
+        RLP.RLPItem[] memory log = retrieveLog(eventSignature, _contractEmittedAddress, _rlpReceipt);
 
-        // // Split logs into constituents. Not all constituents are used here
-        // bytes memory contractEmittedEvent = RLP.toData(log[0]);
-        // RLP.RLPItem[] memory topics = RLP.toList(log[1]);
-        // bytes memory data = RLP.toData(log[2]);
+        // Split logs into constituents. Not all constituents are used here
+        bytes memory contractEmittedEvent = RLP.toData(log[0]);
+        RLP.RLPItem[] memory topics = RLP.toList(log[1]);
+        bytes memory data = RLP.toData(log[2]);
 
         /*
         This section below is specific to this event verifier and checks the relevant data.

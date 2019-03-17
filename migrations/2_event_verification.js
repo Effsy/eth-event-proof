@@ -8,7 +8,7 @@ module.exports = async (deployer) => {
       .then(() => EventEmitter.deployed)
       .then(() => deployer.deploy(EventEmitterVerifier))
       .then(() => EventEmitterVerifier.deployed)
-      .then(() => deployer.deploy(DxiTriggerPostSellOrder))
+      .then(() => deployer.deploy(DxiTriggerPostSellOrder, EventEmitter.address))
       .then(() => DxiTriggerPostSellOrder.deployed)
 
       console.log('Ion contracts deployed');

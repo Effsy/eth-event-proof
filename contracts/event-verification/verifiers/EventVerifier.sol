@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: LGPL-3.0+
 pragma solidity ^0.5.2;
 import "../libraries/RLP.sol";
-//import "../libraries/SolidityUtils.sol";
+import "../libraries/SolidityUtils.sol";
 
 /*
     EventVerifier
@@ -30,31 +30,31 @@ contract EventVerifier {
         If a log is not found, an `assert(false)` consumes all the gas and fails the transaction in order to incentivise
         submission of proper data.
     */
-    // function retrieveLog(bytes32 _eventSignature, bytes20 _contractEmittedAddress, bytes memory _rlpReceipt)
-    //     internal view returns (RLP.RLPItem[] memory)
-    // {
-    //     /*  Decode the receipt into it's consituents and grab the logs with it's known position in the receipt
-    //         object and proceed to decode the logs also.
-    //     */
-    //     RLP.RLPItem[] memory receipt = RLP.toList(RLP.toRLPItem(_rlpReceipt));
-    //     RLP.RLPItem[] memory logs = RLP.toList(receipt[3]);
+    function retrieveLog(bytes32 _eventSignature, bytes20 _contractEmittedAddress, bytes memory _rlpReceipt)
+        internal view returns (RLP.RLPItem[] memory)
+    {
+        /*  Decode the receipt into it's consituents and grab the logs with it's known position in the receipt
+            object and proceed to decode the logs also.
+        */
+        RLP.RLPItem[] memory receipt = RLP.toList(RLP.toRLPItem(_rlpReceipt));
+        RLP.RLPItem[] memory logs = RLP.toList(receipt[3]);
 
-    //     /*  The receipts could contain multiple event logs if a single transaction emitted multiple events. We need to
-    //         separate them and locate the relevant event by signature.
-    //     */
-    //     for (uint i = 0; i < logs.length; i++) {
-    //         RLP.RLPItem[] memory log = RLP.toList(logs[i]);
-    //         RLP.RLPItem[] memory topics = RLP.toList(log[1]);
+        /*  The receipts could contain multiple event logs if a single transaction emitted multiple events. We need to
+            separate them and locate the relevant event by signature.
+        */
+        for (uint i = 0; i < logs.length; i++) {
+            RLP.RLPItem[] memory log = RLP.toList(logs[i]);
+            RLP.RLPItem[] memory topics = RLP.toList(log[1]);
 
-    //         bytes32 containedEventSignature = RLP.toBytes32(topics[0]);
-    //         if (containedEventSignature == _eventSignature) {
-    //             // If event signature is found, check the contract address it was emitted from
-    //             bytes20 b20_emissionSource = SolUtils.BytesToBytes20(RLP.toData(log[0]), 0);
-    //             assert( b20_emissionSource == _contractEmittedAddress);
-    //             return log;
-    //         }
-    //     }
-    //     assert(false);
-    // }
+            bytes32 containedEventSignature = RLP.toBytes32(topics[0]);
+            if (containedEventSignature == _eventSignature) {
+                // If event signature is found, check the contract address it was emitted from
+                bytes20 b20_emissionSource = SolUtils.BytesToBytes20(RLP.toData(log[0]), 0);
+                assert( b20_emissionSource == _contractEmittedAddress);
+                return log;
+            }
+        }
+        assert(false);
+    }
 
 }
