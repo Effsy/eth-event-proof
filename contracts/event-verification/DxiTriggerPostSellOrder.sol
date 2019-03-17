@@ -28,7 +28,6 @@ contract EventEmitterVerifier {
 contract DxiTriggerPostSellOrder {
 
     using RLP for RLP.RLPItem;
-    using RLP for RLP.Iterator;
     using RLP for bytes;
 
     EventEmitterVerifier verifier;
@@ -36,7 +35,6 @@ contract DxiTriggerPostSellOrder {
     constructor(address _verifierAddr) public {
         verifier = EventEmitterVerifier(_verifierAddr);
     }
-
 
     /*  
         verifyAndExecute
@@ -88,96 +86,15 @@ contract DxiTriggerPostSellOrder {
         // Validate blockheader.blockhash against blockhash(blockheader.blocknumber)
         // Get receiptToot from blockheader
 
-        //assert(CheckTxProof(proof[1].toBytes(), proof[2].toBytes(), proof[0].toBytes()));
-        assert(CheckReceiptProof(proof[3].toBytes(), proof[4].toBytes(), proof[0].toBytes(), _receiptRoot));
+        //assert(CheckReceiptProof(proof[3].toBytes(), proof[4].toBytes(), proof[0].toBytes(), _receiptRoot));
+
+        // Verify receipt is in receipt's trie        
+        verifyProof(proof[3].toBytes(), proof[4].toBytes(), proof[0].toBytes(), _receiptRoot);
 
         return proof[3].toBytes();
     }
 
-    /*
-    * CheckTxProof
-    * param: _id (bytes32) Unique id of chain submitting block from
-    * param: _blockHash (bytes32) Block hash of block being submitted
-    * param: _value (bytes) RLP-encoded transaction object array with fields defined as: https://github.com/ethereumjs/ethereumjs-tx/blob/0358fad36f6ebc2b8bea441f0187f0ff0d4ef2db/index.js#L50
-    * param: _parentNodes (bytes) RLP-encoded array of all relevant nodes from root node to node to prove
-    * param: _path (bytes) Byte array of the path to the node to be proved
-    *
-    * emits: VerifiedTxProof(chainId, blockHash, proofType)
-    *        chainId: (bytes32) hash of the chain verifying proof against
-    *        blockHash: (bytes32) hash of the block verifying proof against
-    *        proofType: (uint) enum of proof type
-    *
-    * All data associated with the proof must be constructed and provided to this function. Modifiers restrict execution
-    * of this function to only allow if the chain the proof is for is registered to this contract and if the block that
-    * the proof is for has been submitted.
-    */
-    function CheckTxProof(
-        bytes memory _value,
-        bytes memory _parentNodes,
-        bytes memory _path,
-        bytes32 _txRoot
-    )
-        internal
-        returns (bool)
-    {
-        verifyProof(_value, _parentNodes, _path, _txRoot);
-
-        return true;
-    }
-
-    /*
-    * CheckReceiptProof
-    * param: _id (bytes32) Unique id of chain submitting block from
-    * param: _blockHash (bytes32) Block hash of block being submitted
-    * param: _value (bytes) RLP-encoded receipt object array with fields defined as: https://github.com/ethereumjs/ethereumjs-tx/blob/0358fad36f6ebc2b8bea441f0187f0ff0d4ef2db/index.js#L50
-    * param: _parentNodes (bytes) RLP-encoded array of all relevant nodes from root node to node to prove
-    * param: _path (bytes) Byte array of the path to the node to be proved
-    *
-    * emits: VerifiedTxProof(chainId, blockHash, proofType)
-    *        chainId: (bytes32) hash of the chain verifying proof against
-    *        blockHash: (bytes32) hash of the block verifying proof against
-    *        proofType: (uint) enum of proof type
-    *
-    * All data associated with the proof must be constructed and paddChainrovided to this function. Modifiers restrict execution
-    * of this function to only allow if the chain the proof is for is registered to this contract and if the block that
-    * the proof is for has been submitted.
-    */
-    function CheckReceiptProof(
-        bytes memory _value,
-        bytes memory _parentNodes,
-        bytes memory _path,
-        bytes32 _receiptRoot
-    )
-        internal
-        returns (bool)
-    {
-        verifyProof(_value, _parentNodes, _path, _receiptRoot);
-
-        return true;
-    }
-    
     function verifyProof(bytes memory _value, bytes memory _parentNodes, bytes memory _path, bytes32 _hash) internal {
         assert( PatriciaTrie.verifyProof(_value, _parentNodes, _path, _hash) );
-    }
-
-/*
-========================================================================================================================
-
-    Helper Functions
-
-========================================================================================================================
-*/
-
-    /*
-    * @description      returns the root node of an RLP encoded Patricia Trie
-	* @param _rlpNodes  RLP encoded trie
-	* @returns          root hash
-	*/
-    function getRootNodeHash(bytes memory _rlpNodes) private view returns (bytes32) {
-        RLP.RLPItem[] memory nodeList = _rlpNodes.toRLPItem().toList();
-
-        bytes memory b_nodeRoot = RLP.toBytes(nodeList[0]);
-
-        return keccak256(b_nodeRoot);
     }
 }
