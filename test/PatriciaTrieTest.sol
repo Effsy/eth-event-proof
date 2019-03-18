@@ -1,7 +1,7 @@
 pragma solidity ^0.5.2;
 
 import "truffle/Assert.sol";
-import "../contracts/event-verification/libraries/PatriciaTrie.sol";
+import "../contracts/libraries/PatriciaTrie.sol";
 
 contract PatriciaTrieTest {
 
