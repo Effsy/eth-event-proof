@@ -19,9 +19,7 @@ contract DxiTriggerPostSellOrder {
 
     function verifyAndExecute(
         bytes memory _proof,
-        bytes memory _blockHeader,
-        bytes20 _contractEmittedAddress
-        
+        bytes memory _blockHeader        
     ) public {
         bytes memory receipt = Verifier.CheckProofs(_proof, _blockHeader);
 

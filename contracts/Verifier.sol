@@ -15,17 +15,17 @@ library Verifier {
     function CheckProofs(bytes memory _proof, bytes memory _blockHeader) internal returns (bytes memory){
         RLP.RLPItem[] memory proof = _proof.toRLPItem().toList();
 
-        require(proof.length == 5, "Malformed proof");
+        //require(proof.length == 5, "Malformed proof");
 
-        BlockHeader memory blockHeader = decodeBlockHeader(_blockHeader);
+        // BlockHeader memory blockHeader = decodeBlockHeader(_blockHeader);
             
-        bytes32 validBlockHash = blockhash(blockHeader.number);
-        bytes32 givenBlockHash = keccak256(_blockHeader);
+        // bytes32 validBlockHash = blockhash(blockHeader.number);
+        // bytes32 givenBlockHash = keccak256(_blockHeader);
     
-        require(validBlockHash == givenBlockHash, "invalid block hash");
+        // require(validBlockHash == givenBlockHash, "invalid block hash");
 
         // Verify receipt is in receipt's trie using receipts root from the validated block header
-        verifyProof(proof[3].toBytes(), proof[4].toBytes(), proof[0].toBytes(), blockHeader.receiptsRoot);
+        //verifyProof(proof[3].toBytes(), proof[4].toBytes(), proof[0].toBytes(), blockHeader.receiptsRoot);
 
         return proof[3].toBytes();
     }
